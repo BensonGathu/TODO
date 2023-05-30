@@ -1,20 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import ToDoItem from "./ToDoItem";
-// import Table from "react-bootstrap/Table";
-import { Header, Image, Table, Button, Icon } from "semantic-ui-react";
+import { Header, Image, Table, Button, Icon, Form } from "semantic-ui-react";
 import classes from "./ToDoList.module.css";
 import { useHistory } from "react-router-dom";
 import Modal from "../Modal/Modal";
+import EditToDoForm from "../ToDo/EditToDoForm";
 
 const ToDoList = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const history = useHistory();
   const [todoItems, setTodoItems] = useState([]);
-  
-  const openModal = () => {
-    setIsOpen(true);
-  };
 
   const closeModal = () => {
     setIsOpen(false);
@@ -32,8 +28,42 @@ const ToDoList = (props) => {
   };
 
   const handleEdit = (id) => {
-    console.log(id);
-    
+   
+    setIsOpen(true);
+
+    const addToDoHandler = (TodoData) => {
+      var todoDetails = {
+        title: TodoData.title,
+        description: TodoData.description,
+      };
+  
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "JWT fefege...",
+      };
+  
+      var body = JSON.stringify(todoDetails);
+  
+      axios
+        .put(`http://127.0.0.1:8000/api/item/update/${id}`, body, {
+          headers: headers,
+        })
+  
+        .then((res) => {
+          console.log("RESPONSE RECEIVED: ", res);
+         
+
+          
+        })
+        .catch((err) => {
+          let errorMessage = "An Error Ocurred";
+  
+          alert(errorMessage);
+          console.log("AXIOS ERROR: ", err);
+        });
+  
+     
+    };
   };
 
   const handleDelete = (id) => {
@@ -81,6 +111,10 @@ const ToDoList = (props) => {
 
   return (
     <React.Fragment>
+      
+       <Modal isOpen={isOpen} onClose={closeModal} >
+        <EditToDoForm onAddToDo={props.addToDoHandler}></EditToDoForm>{props.children}
+      </Modal>
       <div
         style={{
           display: "block",
@@ -105,7 +139,7 @@ const ToDoList = (props) => {
                     <p>{todo.description}</p>
                   )
                 }
-                handleEdit={openModal}
+                handleEdit={() => handleEdit(todo.id)}
                 handleDone={() => handleDone(todo.id)}
                 handleDelete={() => {
                   handleDelete(todo.id);
@@ -117,10 +151,7 @@ const ToDoList = (props) => {
           </Table.Body>
         </Table>
       </div>
-      {/* <Modal isOpen={isOpen} onClose={closeModal}>
-        <h2>Edit ToDo</h2>
-        <p></p>
-      </Modal> */}
+     
     </React.Fragment>
   );
 };

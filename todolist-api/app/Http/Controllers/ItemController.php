@@ -109,6 +109,7 @@ class ItemController extends Controller
         $existingItem = Item::find($id);  
 
         if($existingItem){
+            $existingItem->title = $request->title; 
            $existingItem->description = $request->description; 
            
            $existingItem->updated_at = Carbon::now() ;
