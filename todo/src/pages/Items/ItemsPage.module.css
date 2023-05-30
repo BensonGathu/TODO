@@ -1,0 +1,13 @@
+.card {
+    padding-top: 0rem;
+    padding-right: 25rem;
+    padding-left: 25rem;
+    padding-bottom:0rem;
+    margin: 0rem;
+    border-radius: 6px;
+    background-color: white;
+  }
+  
+  .card h4{
+    text-align: center;
+  }
