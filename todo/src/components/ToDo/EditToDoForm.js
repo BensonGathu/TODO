@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import classes from "./AddToDoForm.module.css";
 import { Button, Icon, Modal } from "semantic-ui-react";
 import axios from "axios";
@@ -7,26 +7,33 @@ import Form from "react-bootstrap/Form";
 
 const EditToDoForm = (props) => {
   const [showComponent, setShowComponent] = useState(false);
-  const titleInputRef = useRef();
-  const descriptionInputRef = useRef();
+  const [input, setInput] = useState({ title: "", description: ""});
+
+  useEffect(() => {
+    if(props.todoDetails) {
+      setInput({ title: props.todoDetails.title, description: props.todoDetails.description});
+    }
+  }, [props.todoDetails]);
 
   function submitFormHandler(event) {
     event.preventDefault();
 
-    const enteredTitle = titleInputRef.current.value;
-    const enteredDescription = descriptionInputRef.current.value;
+    props.onAddToDo(input);
 
-    //  validate here
-    const enteredTitleIsValid = enteredTitle.trim() !== "";
-    const enteredDescriptionIsValid = enteredDescription.trim() !== "";
-    if (enteredTitleIsValid && enteredDescriptionIsValid) {
-      props.onAddToDo({
-        title: enteredTitle,
-        description: enteredDescription,
-      });
-    } else {
-      return;
-    }
+    // const enteredTitle = titleInputRef.current.value;
+    // const enteredDescription = descriptionInputRef.current.value;
+
+    // //  validate here
+    // const enteredTitleIsValid = enteredTitle.trim() !== "";
+    // const enteredDescriptionIsValid = enteredDescription.trim() !== "";
+    // if (enteredTitleIsValid && enteredDescriptionIsValid) {
+    //   props.onAddToDo({
+    //     title: enteredTitle,
+    //     description: enteredDescription,
+    //   });
+    // } else {
+    //   return;
+    // }
   }
   return (
     <React.Fragment>
@@ -38,8 +45,8 @@ const EditToDoForm = (props) => {
               placeholder="Title"
               required
               id="title"
-              ref={titleInputRef}
-              value={titleInputRef.value}
+              value={input.title}
+              onChange={(e) => setInput((prevValue) => ({...prevValue, title: e.target.value}))}
             />
           </Form.Group>
           <Form.Group>
@@ -48,8 +55,8 @@ const EditToDoForm = (props) => {
               id="description"
               placeholder="ToDo Description"
               required
-              ref={descriptionInputRef}
-              value={descriptionInputRef.value}
+              value={input.description}
+              onChange={(e) => setInput((prevValue) => ({...prevValue, description: e.target.value}))}
             />
           </Form.Group>
 

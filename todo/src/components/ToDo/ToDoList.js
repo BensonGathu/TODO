@@ -11,6 +11,8 @@ const ToDoList = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const history = useHistory();
   const [todoItems, setTodoItems] = useState([]);
+  const [todoDetails, setTodoDetails] = useState({ id: "", title: "", description: ""});
+
 
   const closeModal = () => {
     setIsOpen(false);
@@ -28,42 +30,42 @@ const ToDoList = (props) => {
   };
 
   const handleEdit = (id) => {
+
+    let details = todoItems.filter((v) => v.id == id);
+    console.log(details);
+     setTodoDetails({ id: id, title: details[0].title, description: details[0].description});
    
     setIsOpen(true);
+  };
 
-    const addToDoHandler = (TodoData) => {
-      var todoDetails = {
-        title: TodoData.title,
-        description: TodoData.description,
-      };
-  
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: "JWT fefege...",
-      };
-  
-      var body = JSON.stringify(todoDetails);
-  
-      axios
-        .put(`http://127.0.0.1:8000/api/item/update/${id}`, body, {
-          headers: headers,
-        })
-  
-        .then((res) => {
-          console.log("RESPONSE RECEIVED: ", res);
-         
-
-          
-        })
-        .catch((err) => {
-          let errorMessage = "An Error Ocurred";
-  
-          alert(errorMessage);
-          console.log("AXIOS ERROR: ", err);
-        });
-  
-     
+  const addToDoHandler = (TodoData) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: "JWT fefege...",
     };
+
+    var body = JSON.stringify(TodoData);
+
+    axios
+      .put(`http://127.0.0.1:8000/api/item/update/${todoDetails.id}`, body, {
+        headers: headers,
+      })
+
+      .then((res) => {
+        console.log("RESPONSE RECEIVED: ", res);
+        window.location.reload(true);
+        setIsOpen(false);
+
+        
+      })
+      .catch((err) => {
+        let errorMessage = "An Error Ocurred";
+
+        alert(errorMessage);
+        console.log("AXIOS ERROR: ", err);
+      });
+
+   
   };
 
   const handleDelete = (id) => {
@@ -113,8 +115,9 @@ const ToDoList = (props) => {
     <React.Fragment>
       
        <Modal isOpen={isOpen} onClose={closeModal} >
-        <EditToDoForm onAddToDo={props.addToDoHandler}></EditToDoForm>{props.children}
+        <EditToDoForm onAddToDo={addToDoHandler} todoDetails={todoDetails}></EditToDoForm>{props.children}
       </Modal>
+
       <div
         style={{
           display: "block",
@@ -137,7 +140,7 @@ const ToDoList = (props) => {
                     <s> {todo.description}</s>
                   ) : (
                     <p>{todo.description}</p>
-                  )
+                  ) 
                 }
                 handleEdit={() => handleEdit(todo.id)}
                 handleDone={() => handleDone(todo.id)}

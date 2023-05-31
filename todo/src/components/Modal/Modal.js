@@ -32,7 +32,7 @@ const Modal = ({ isOpen, onClose, children }) => {
   }
 
   return ReactDOM.createPortal(
-    <div style={styles.overlay}>
+    <div style={styles.overlay}> 
       <div style={styles.content}>
         <button style={styles.close} onClick={onClose}>
           &times;
